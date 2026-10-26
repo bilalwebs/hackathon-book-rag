@@ -1,0 +1,189 @@
+/**
+ * Cyber Neon Theme for Physical AI & Humanoid Robotics
+ * Primary: Electric Cyan #00D4FF
+ * Accent: Electric Purple #8A2BE2
+ * Background: Rich Black #0A0A0A
+ */
+
+/* Light mode - Cyber Neon colors */
+
+:root {
+  --ifm-color-primary: #00D4FF;
+  --ifm-color-primary-dark: #00BFEB;
+  --ifm-color-primary-darker: #00B4DF;
+  --ifm-color-primary-darkest: #0095B8;
+  --ifm-color-primary-light: #1ADDFF;
+  --ifm-color-primary-lighter: #2EE1FF;
+  --ifm-color-primary-lightest: #5CE8FF;
+
+  /* Accent purple */
+  --ifm-color-secondary: #8A2BE2;
+  --ifm-color-secondary-dark: #7B26CA;
+  --ifm-color-secondary-darker: #7423BE;
+  --ifm-color-secondary-darkest: #601D9D;
+  --ifm-color-secondary-light: #9930FA;
+  --ifm-color-secondary-lighter: #A342FF;
+  --ifm-color-secondary-lightest: #B865FF;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 212, 255, 0.1);
+
+  /* Neon glow effects */
+  --neon-glow-cyan: 0 0 5px var(--ifm-color-primary), 0 0 10px var(--ifm-color-primary), 0 0 20px var(--ifm-color-primary);
+  --neon-glow-purple: 0 0 5px var(--ifm-color-secondary), 0 0 10px var(--ifm-color-secondary), 0 0 20px var(--ifm-color-secondary);
+
+  /* Text glow variables for hover effects */
+  --text-glow-blur: 4px;
+  --neon-blue: var(--ifm-color-primary);
+  --neon-purple: var(--ifm-color-secondary);
+  --neon-pink: #FF00FF; /* optional accent */
+}
+
+/* Dark mode - Full Cyber Neon experience */
+[data-theme='dark'] {
+  --ifm-background-color: #0A0A0A;
+  --ifm-background-surface-color: #1A1A1A;
+  --ifm-color-content: #FFFFFF;
+
+  --ifm-color-primary: #00D4FF;
+  --ifm-color-primary-dark: #00BFEB;
+  --ifm-color-primary-darker: #00B4DF;
+  --ifm-color-primary-darkest: #0095B8;
+  --ifm-color-primary-light: #1ADDFF;
+  --ifm-color-primary-lighter: #2EE1FF;
+  --ifm-color-primary-lightest: #5CE8FF;
+
+  --ifm-color-secondary: #8A2BE2;
+  --ifm-color-secondary-dark: #7B26CA;
+  --ifm-color-secondary-darker: #7423BE;
+  --ifm-color-secondary-darkest: #601D9D;
+  --ifm-color-secondary-light: #9930FA;
+  --ifm-color-secondary-lighter: #A342FF;
+  --ifm-color-secondary-lightest: #B865FF;
+
+  --docusaurus-highlighted-code-line-bg: rgba(0, 212, 255, 0.2);
+  --ifm-navbar-background-color: #0A0A0A;
+  --ifm-footer-background-color: #0A0A0A;
+}
+
+/* --- Navbar --- */
+.navbar {
+  background: linear-gradient(90deg, #0A0A0A 0%, #1A1A1A 100%);
+  border-bottom: 2px solid var(--ifm-color-primary);
+  box-shadow: 0 2px 20px rgba(0, 212, 255, 0.3);
+}
+
+.navbar__title {
+  color: var(--ifm-color-primary) !important;
+  font-weight: bold;
+  text-shadow: var(--neon-glow-cyan);
+}
+
+.navbar__link {
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 var(--text-glow-blur) var(--neon-blue);
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  font-weight: 500;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: #fff !important;
+  text-shadow: 0 0 4px var(--neon-purple), 0 0 8px var(--neon-purple);
+}
+
+/* --- Course Page / Cards / Main Content --- */
+.card, .menu, .alert, .theme-doc-markdown a {
+  transition: all 0.3s ease;
+}
+
+.card:hover, .menu .menu__link:hover {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 10px rgba(148, 82, 255, 0.5);
+}
+
+.theme-doc-markdown a {
+  color: var(--neon-blue);
+}
+
+.theme-doc-markdown a:hover {
+  color: var(--neon-purple);
+  text-decoration: underline;
+  text-shadow: 0 0 2px var(--neon-purple);
+}
+
+/* Neon buttons */
+.button--primary {
+  background: linear-gradient(135deg, #00D4FF 0%, #8A2BE2 100%);
+  border: none;
+  box-shadow: var(--neon-glow-cyan);
+  transition: all 0.3s ease;
+}
+
+.button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px #00D4FF, 0 0 30px #00D4FF, 0 0 40px #00D4FF;
+}
+
+/* --- Algolia Searchbox --- */
+.DocSearch-Button {
+  background: transparent !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 3px var(--neon-blue);
+}
+
+.DocSearch-Button:hover {
+  box-shadow: 0 0 8px var(--neon-purple);
+}
+
+.navbar__item.navbar__link[aria-label="Search"] {
+  width: 36px;
+  height: 36px;
+  padding: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar__item.navbar__link[aria-label="Search"] .DocSearch-Button-Placeholder,
+.navbar__item.navbar__link[aria-label="Search"] .DocSearch-Button-Keys {
+  display: none !important;
+}
+
+.DocSearch-Button-Container {
+  width: auto !important;
+}
+
+.DocSearch-Search-Icon {
+  margin-right: 0 !important;
+}
+
+
+.DocSearch-Button-Container {
+  width: auto !important; /* Adjust container */
+}
+
+.DocSearch-Search-Icon {
+  margin-right: 0 !important; /* Remove margin next to icon */
+}
+/* Cyber animations */
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 212, 255, 1), 0 0 30px rgba(0, 212, 255, 0.8);
+  }
+}
+
+h1 {
+  animation: neon-pulse 3s ease-in-out infinite;
+  color: var(--ifm-color-primary);
+}
+
+/* Responsive cyber elements */
+@media (max-width: 996px) {
+  .navbar {
+    border-bottom: 1px solid var(--ifm-color-primary);
+  }
+}

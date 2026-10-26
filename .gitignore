@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+
+# Node
+node_modules/
+.docusaurus/
+build/
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# Environment files
+.env
+*.env
+
+# Virtual environment
+venv/
+.venv/
+backend/venv/
