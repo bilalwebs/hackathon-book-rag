@@ -129,6 +129,16 @@ Please provide a detailed answer based ONLY on the context above. Include source
 
         answer = llm_provider.generate_chat_completion(messages, temperature=0.3, max_tokens=800)
 
+        # print("RAW ANSWER:", repr(answer))
+        # print("UTF8 BYTES:", answer.encode("utf-8"))
+        # print("JSON CHECK:", repr(ChatResponse(
+        #     answer=answer,
+        #     sources=sources,
+        #     conversation_id="diagnostic",
+        #     processing_time=0,
+        #     timestamp="diagnostic"
+        # ).model_dump_json()))
+
         # Calculate processing time
         processing_time = int((time.time() - start_time) * 1000)
 

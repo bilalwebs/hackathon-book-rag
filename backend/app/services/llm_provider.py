@@ -8,6 +8,9 @@ from dataclasses import dataclass
 
 from fastapi import HTTPException
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 @dataclass
 class ProviderConfig:
@@ -45,11 +48,11 @@ class LLMProvider:
     def _get_embedding_model(self) -> str:
         provider = self.embedding_provider
         if provider == "gemini":
-            return os.getenv("GEMINI_EMBEDDING_MODEL", "text-embedding-004").strip()
+            return os.getenv("GEMINI_EMBEDDING_MODEL", "text-embedding-001").strip()
         elif provider == "openai":
             return os.getenv("EMBEDDING_MODEL", "text-embedding-3-small").strip()
-        return os.getenv("GEMINI_EMBEDDING_MODEL", "text-embedding-004").strip()
-    
+        return os.getenv("GEMINI_EMBEDDING_MODEL", "text-embedding-001").strip()
+
     def get_chat_client(self):
         provider = self.provider
         if provider == "gemini":

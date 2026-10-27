@@ -9,6 +9,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { chatService, ChatMessage, ChatRequest } from '../../services/chatService';
 import styles from './ChatWidget.module.css';
+import ReactMarkdown from 'react-markdown';
 
 export const ChatWidget: React.FC = () => {
   const { siteConfig } = useDocusaurusContext();
@@ -171,7 +172,9 @@ export const ChatWidget: React.FC = () => {
               >
                 <div className={styles.messageContent}>
                   <strong>{msg.role === 'user' ? 'You' : 'AI Tutor'}:</strong>
-                  <p>{msg.content}</p>
+                  <div className={styles.markdownContent}>
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
 
                   {/* Show sources for assistant messages */}
                   {msg.role === 'assistant' && msg.sources && msg.sources.length > 0 && (
