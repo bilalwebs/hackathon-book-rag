@@ -5,11 +5,16 @@
  * allowing students to ask questions and receive AI responses.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import { chatService, ChatMessage, ChatRequest } from '../../services/chatService';
-import styles from './ChatWidget.module.css';
-import ReactMarkdown from 'react-markdown';
+import React, { useState, useRef, useEffect } from "react";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import {
+  chatService,
+  ChatMessage,
+  ChatRequest,
+} from "../../services/chatService";
+import styles from "./ChatWidget.module.css";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const ChatWidget: React.FC = () => {
   const { siteConfig } = useDocusaurusContext();
@@ -17,7 +22,7 @@ export const ChatWidget: React.FC = () => {
   // State management
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +35,7 @@ export const ChatWidget: React.FC = () => {
    * Auto-scroll to bottom when new messages arrive
    */
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   /**
@@ -57,13 +62,13 @@ export const ChatWidget: React.FC = () => {
 
     // Add user message to chat
     const userMessage: ChatMessage = {
-      role: 'user',
+      role: "user",
       content: query,
       timestamp: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInputValue(''); // Clear input
+    setInputValue(""); // Clear input
     setIsLoading(true);
     setError(null);
 
@@ -83,20 +88,20 @@ export const ChatWidget: React.FC = () => {
 
       // Add assistant response to chat
       const assistantMessage: ChatMessage = {
-        role: 'assistant',
+        role: "assistant",
         content: response.answer,
         timestamp: response.timestamp,
         sources: response.sources,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-
     } catch (err) {
       // Handle errors
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorMessage);
 
-      console.error('Chat error:', err);
+      console.error("Chat error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +111,7 @@ export const ChatWidget: React.FC = () => {
    * Handle Enter key to send (Shift+Enter for newline)
    */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -136,7 +141,7 @@ export const ChatWidget: React.FC = () => {
         onClick={toggleChat}
         aria-label="Toggle chat"
       >
-        {isOpen ? '✕' : '💬'}
+        {isOpen ? "✕" : "💬"}
       </button>
 
       {/* Chat window (only visible when open) */}
@@ -158,10 +163,17 @@ export const ChatWidget: React.FC = () => {
           <div className={styles.messagesContainer}>
             {messages.length === 0 && (
               <div className={styles.welcomeMessage}>
-                <p><strong>Welcome!</strong></p>
+                <p>
+                  <strong>Welcome!</strong>
+                </p>
                 <p>I'm your AI tutor for Physical AI & Humanoid Robotics.</p>
-                <p>Ask me anything about ROS 2, Gazebo, NVIDIA Isaac, or VLA!</p>
-                <p className={styles.hint}>💡 Tip: Select text on the page and ask questions for context-aware answers.</p>
+                <p>
+                  Ask me anything about ROS 2, Gazebo, NVIDIA Isaac, or VLA!
+                </p>
+                <p className={styles.hint}>
+                  💡 Tip: Select text on the page and ask questions for
+                  context-aware answers.
+                </p>
               </div>
             )}
 
@@ -171,33 +183,53 @@ export const ChatWidget: React.FC = () => {
                 className={`${styles.message} ${styles[msg.role]}`}
               >
                 <div className={styles.messageContent}>
-                  <strong>{msg.role === 'user' ? 'You' : 'AI Tutor'}:</strong>
+                  <strong>{msg.role === "user" ? "You" : "AI Tutor"}:</strong>
                   <div className={styles.markdownContent}>
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content}
+                    </ReactMarkdown>
                   </div>
 
                   {/* Show sources for assistant messages */}
-                  {msg.role === 'assistant' && msg.sources && msg.sources.length > 0 && (
-                    <div className={styles.sources}>
-                      <strong>Sources:</strong>
-                      <ul>
-                        {msg.sources.map((source, idx) => {
-                          // Construct URL with baseUrl
-                          const cleanUrl = source.url.startsWith('/') ? source.url.substring(1) : source.url;
-                          const origin = typeof window !== 'undefined' ? window.location.origin : '';
-                          const fullUrl = `${origin}${baseUrl}${cleanUrl}`;
+                  {msg.role === "assistant" &&
+                    msg.sources &&
+                    msg.sources.length > 0 && (
+                      <div className={styles.sources}>
+                        <strong>Sources:</strong>
+                        <ul>
+                          {msg.sources.map((source, idx) => {
+                            // Construct URL with baseUrl
+                            const cleanUrl = source.url.startsWith("/")
+                              ? source.url.substring(1)
+                              : source.url;
+                            const origin =
+                              typeof window !== "undefined"
+                                ? window.location.origin
+                                : "";
+                            const fullUrl = `${origin}${baseUrl}${cleanUrl}`;
 
-                          return (
-                            <li key={idx}>
-                              <a href={fullUrl} target="_blank" rel="noopener noreferrer">
-                                {source.module} - {source.chapter}
-                              </a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
+                            const sourceNum =
+                              (source as any).source_number !== undefined &&
+                              (source as any).source_number !== null
+                                ? (source as any).source_number
+                                : idx + 1;
+
+                            return (
+                              <li key={`${source.url}-${sourceNum}-${idx}`}>
+                                <a
+                                  href={fullUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <strong>[Source {sourceNum}]</strong>{" "}
+                                  {source.module} - {source.chapter}
+                                </a>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    )}
                 </div>
               </div>
             ))}

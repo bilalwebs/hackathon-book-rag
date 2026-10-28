@@ -19,6 +19,7 @@ export interface SourceCitation {
   section?: string;
   url: string;
   relevance_score: number;
+  source_number?: number;
 }
 
 /**
