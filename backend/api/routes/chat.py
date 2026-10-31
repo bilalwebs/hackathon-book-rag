@@ -319,10 +319,8 @@ async def chat_query(query: ChatQuery):
         sources = []
         source_map = {}
 
-        # Keep all retrieved chunks in the context.
-        # Deduplicate only the displayed source links.
-        seen_sources = {}
-
+        # Keep one source entry for every retrieved chunk.
+        # Each citation number will map to its own URL.
         for idx, result in enumerate(search_results):
             payload = result.payload or {}
 
@@ -331,16 +329,17 @@ async def chat_query(query: ChatQuery):
             chapter = payload.get("chapter", "Unknown")
             section = payload.get("section")
 
-            # Each retrieved chunk gets its own citation number.
+            # Assign a unique number to each retrieved chunk.
             source_number = idx + 1
 
+            # Add the numbered chunk to the LLM context.
             context_parts.append(
                 f"[Source {source_number}] "
                 f"({payload.get('file', module)})\n"
                 f"{payload.get('text', payload.get('content', ''))}\n"
             )
 
-            # Keep a mapping for each citation number.
+            # Preserve the exact mapping for this citation.
             source_map[source_number] = {
                 "module": module,
                 "chapter": chapter,
@@ -348,28 +347,21 @@ async def chat_query(query: ChatQuery):
                 "url": url,
             }
 
-            # Deduplicate source links by URL.
-            # If multiple chunks come from the same URL, keep the
-            # highest-ranked occurrence in the displayed sources.
-            if url not in seen_sources:
-                seen_sources[url] = Source(
+            # Return each chunk separately so citation numbers
+            # remain aligned with their corresponding URLs.
+            sources.append(
+                Source(
                     module=module,
                     chapter=chapter,
                     section=section,
                     url=url,
                     relevance_score=round(result.score, 3),
-                    source_number=source_number
+                    source_number=source_number,
                 )
-            else:
-                # Preserve a citation number for the duplicate URL group
-                # if none assigned yet (keeps backward compatibility)
-                if seen_sources[url].source_number is None:
-                    seen_sources[url].source_number = source_number
+            )
 
+        # Combine all retrieved chunks into the context.
         context = "\n".join(context_parts)
-
-        # Sources are unique URLs, in relevance order.
-        sources = list(seen_sources.values())
 
         # Step 4: Generate answer
         system_prompt = """You are an expert AI assistant for the Physical AI & Humanoid Robotics textbook.
@@ -414,8 +406,6 @@ Include accurate citations using the exact [Source N] labels.
             temperature=0.3,
             max_tokens=1600
         )
-
-        print("RAW ANSWER:", repr(answer), flush=True)
 
         # Step 5: Calculate processing time
         processing_time = int((time.time() - start_time) * 1000)

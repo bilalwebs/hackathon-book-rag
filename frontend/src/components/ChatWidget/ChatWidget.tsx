@@ -15,10 +15,23 @@ import {
 import styles from "./ChatWidget.module.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { remarkCitations } from "../../utils/citations";
 
 export const ChatWidget: React.FC = () => {
   const { siteConfig } = useDocusaurusContext();
   const baseUrl = siteConfig.baseUrl;
+
+  const resolveSourceUrl = (url: string) => {
+    if (/^https?:\/\//i.test(url)) {
+      return url;
+    }
+
+    const cleanUrl = url.startsWith("/") ? url.substring(1) : url;
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "";
+    return `${origin}${baseUrl}${cleanUrl}`;
+  };
+
   // State management
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -185,7 +198,18 @@ export const ChatWidget: React.FC = () => {
                 <div className={styles.messageContent}>
                   <strong>{msg.role === "user" ? "You" : "AI Tutor"}:</strong>
                   <div className={styles.markdownContent}>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown
+                      remarkPlugins={[
+                        remarkGfm,
+                        [
+                          remarkCitations,
+                          {
+                            sources: msg.sources,
+                            resolveUrl: resolveSourceUrl,
+                          },
+                        ],
+                      ]}
+                    >
                       {msg.content}
                     </ReactMarkdown>
                   </div>
@@ -198,30 +222,22 @@ export const ChatWidget: React.FC = () => {
                         <strong>Sources:</strong>
                         <ul>
                           {msg.sources.map((source, idx) => {
-                            // Construct URL with baseUrl
-                            const cleanUrl = source.url.startsWith("/")
-                              ? source.url.substring(1)
-                              : source.url;
-                            const origin =
-                              typeof window !== "undefined"
-                                ? window.location.origin
-                                : "";
-                            const fullUrl = `${origin}${baseUrl}${cleanUrl}`;
-
-                            const sourceNum =
-                              (source as any).source_number !== undefined &&
-                              (source as any).source_number !== null
-                                ? (source as any).source_number
-                                : idx + 1;
+                            const fullUrl = resolveSourceUrl(source.url);
+                            const sourceNumber = source.source_number;
 
                             return (
-                              <li key={`${source.url}-${sourceNum}-${idx}`}>
+                              <li key={`${source.url}-${sourceNumber ?? "un-numbered"}-${idx}`}>
                                 <a
                                   href={fullUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
-                                  <strong>[Source {sourceNum}]</strong>{" "}
+                                  {sourceNumber !== undefined &&
+                                    sourceNumber !== null && (
+                                      <>
+                                        <strong>[Source {sourceNumber}]</strong>{" "}
+                                      </>
+                                    )}
                                   {source.module} - {source.chapter}
                                 </a>
                               </li>

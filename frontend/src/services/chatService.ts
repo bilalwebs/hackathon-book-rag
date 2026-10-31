@@ -19,7 +19,7 @@ export interface SourceCitation {
   section?: string;
   url: string;
   relevance_score: number;
-  source_number?: number;
+  source_number?: number | null;
 }
 
 /**
@@ -193,6 +193,13 @@ class ChatService {
       `3. Seed Qdrant vector database\n` +
       `4. Update API_BASE_URL in chatService.ts\n\n` +
       `🎯 **This demo shows the chatbot UI - Backend integration ready!**`;
+
+    // Demo sources have no backend citation numbers, so assign them here
+    // to keep the displayed [Source N] labels stable.
+    sources = sources.map((source, index) => ({
+      ...source,
+      source_number: index + 1,
+    }));
 
     return {
       answer,

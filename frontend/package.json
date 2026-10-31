@@ -10,6 +10,7 @@
     "deploy": "gh-pages -d build -b gh-pages",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
+    "test:citations": "node --test tests/citations.test.mjs",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc"

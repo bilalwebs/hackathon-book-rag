@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Layout from '@theme/Layout';
 import styles from './chatbot.module.css';
-import { chatService, ChatMessage } from '../services/chatService';
+import { chatService, SourceCitation } from '../services/chatService';
+import { CitationText } from '../components/CitationText/CitationText';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
-  sources?: any[];
+  sources?: SourceCitation[];
 }
 
 export default function RAGChat(): React.ReactElement {
@@ -99,18 +100,30 @@ export default function RAGChat(): React.ReactElement {
             messages.map((msg, idx) => (
               <div key={idx} className={`${styles.message} ${styles[msg.role]}`}>
                 <div className={styles.messageContent}>
-                  {msg.content}
+                  <CitationText text={msg.content} sources={msg.sources} />
                 </div>
                 {msg.sources && msg.sources.length > 0 && (
                   <details className={styles.sources}>
                     <summary>📖 Sources ({msg.sources.length})</summary>
                     <div className={styles.sourcesList}>
-                      {msg.sources.map((source, sidx) => (
-                        <div key={sidx} className={styles.source}>
-                          <strong>Source {sidx + 1}:</strong> {source.module} - {source.chapter}
-                          <a href={source.url} target="_blank" rel="noopener noreferrer">View Source</a>
-                        </div>
-                      ))}
+                      {msg.sources.map((source, sidx) => {
+                        const sourceNumber = source.source_number;
+
+                        return (
+                          <div
+                            key={`${sourceNumber ?? 'un-numbered'}-${source.url}-${source.module}-${source.chapter}-${sidx}`}
+                            className={styles.source}
+                          >
+                            {sourceNumber !== undefined && sourceNumber !== null && (
+                              <>
+                                <strong>Source {sourceNumber}:</strong>{' '}
+                              </>
+                            )}
+                            {source.module} - {source.chapter}
+                            <a href={source.url} target="_blank" rel="noopener noreferrer">View Source</a>
+                          </div>
+                        );
+                      })}
                     </div>
                   </details>
                 )}
